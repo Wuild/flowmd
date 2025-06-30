@@ -1,0 +1,1 @@
+{"version":3,"file":"OrderedListPlugin.d.ts","sourceRoot":"","sources":["../../src/plugins/OrderedListPlugin.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,UAAU,EAAE,MAAM,cAAc,CAAA;AAEzC;;GAEG;AACH,MAAM,CAAC,OAAO,OAAO,iBAAkB,SAAQ,UAAU;IACvD;;OAEG;IACH,SAAgB,IAAI,iBAAgB;IAEpC;;OAEG;;IAiBH;;;;OAIG;IACH,OAAO,CAAC,iBAAiB;IAgBzB;;;;;OAKG;IACH,OAAO,CAAC,WAAW;CAUpB"}

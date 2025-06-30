@@ -1,0 +1,1 @@
+{"version":3,"file":"BlockquotePlugin.d.ts","sourceRoot":"","sources":["../../src/plugins/BlockquotePlugin.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,UAAU,EAAE,MAAM,cAAc,CAAA;AAEzC;;GAEG;AACH,MAAM,CAAC,OAAO,OAAO,gBAAiB,SAAQ,UAAU;IACtD;;OAEG;IACH,SAAgB,IAAI,gBAAe;IAEnC;;OAEG;;IAeH;;;;OAIG;IACH,OAAO,CAAC,gBAAgB;CAezB"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"HorizontalRulePlugin.d.ts","sourceRoot":"","sources":["../../src/plugins/HorizontalRulePlugin.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,UAAU,EAAE,MAAM,cAAc,CAAA;AAEzC;;GAEG;AACH,MAAM,CAAC,OAAO,OAAO,oBAAqB,SAAQ,UAAU;IAC1D;;OAEG;IACH,SAAgB,IAAI,oBAAmB;IAEvC;;OAEG;;IAeH;;;;OAIG;IACH,OAAO,CAAC,oBAAoB;CAsB7B"}
