@@ -1,7 +1,78 @@
+
 import { setBlockType } from 'prosemirror-commands'
-import { EditorState, Transaction } from 'prosemirror-state'
-import { EditorView } from 'prosemirror-view'
+import { EditorState, Transaction, Plugin } from 'prosemirror-state'
+import { EditorView, NodeView, Decoration } from 'prosemirror-view'
+import { Node as ProseMirrorNode } from 'prosemirror-model'
 import { BasePlugin } from './BasePlugin'
+import hljs from 'highlight.js'
+
+/**
+ * A NodeView for code blocks that applies syntax highlighting when a language is specified
+ */
+class CodeBlockView implements NodeView {
+  dom: HTMLElement
+  contentDOM: HTMLElement
+  node: ProseMirrorNode
+
+  constructor(node: ProseMirrorNode, view: EditorView, getPos: (() => number) | undefined) {
+    this.node = node
+
+    // Create the outer DOM node (pre)
+    this.dom = document.createElement('pre')
+
+    // Create the content DOM node (code)
+    this.contentDOM = document.createElement('code')
+    this.dom.appendChild(this.contentDOM)
+
+    // Apply syntax highlighting if a language is specified
+    this.applyHighlighting()
+  }
+
+  update(node: ProseMirrorNode): boolean {
+    if (node.type.name !== 'code_block') return false
+    this.node = node
+    this.applyHighlighting()
+    return true
+  }
+
+  /**
+   * Apply syntax highlighting to the code block if a language is specified
+   */
+  private applyHighlighting(): void {
+    // Get the language from the node attributes
+    const language = this.node.attrs.params || this.node.attrs.language
+
+    console.log('CodeBlock attributes:', this.node.attrs)
+    console.log('Language found:', language)
+
+    // Remove any existing classes from previous highlighting
+    this.dom.className = ''
+    this.contentDOM.className = ''
+
+    // Always add a base class for styling
+    this.dom.classList.add('code-block')
+    this.contentDOM.classList.add('code-content')
+
+    // Apply syntax highlighting if a language is specified
+    if (language && language.trim()) {
+      try {
+        // Add the language class to both pre and code elements
+        const languageClass = `language-${language.trim()}`
+        console.log('Adding language class:', languageClass)
+
+        this.dom.classList.add(languageClass)
+        this.contentDOM.classList.add(languageClass)
+
+        // Apply highlighting
+        hljs.highlightElement(this.contentDOM)
+      } catch (error) {
+        console.error('Error applying syntax highlighting:', error)
+      }
+    } else {
+      console.log('No language specified for code block')
+    }
+  }
+}
 
 /**
  * Plugin for code block formatting
@@ -25,7 +96,16 @@ export default class CodeBlockPlugin extends BasePlugin {
       },
       keymap: {
         'Mod-Shift-\\': (state, dispatch) => this.toggleCodeBlock(state, dispatch)
-      }
+      },
+      plugins: [
+        new Plugin({
+          props: {
+            nodeViews: {
+              code_block: (node, view, getPos) => new CodeBlockView(node, view, getPos as (() => number) | undefined)
+            }
+          }
+        })
+      ]
     })
   }
 
@@ -76,7 +156,16 @@ export default class CodeBlockPlugin extends BasePlugin {
       return setBlockType(schema.nodes.paragraph)(state, dispatch)
     } else {
       // Convert to code block with optional language
-      const attrs = language ? { params: language } : undefined
+      // Try multiple attribute names to ensure compatibility
+      let attrs: any = undefined
+      if (language && language.trim()) {
+        attrs = {
+          params: language.trim(),
+          language: language.trim()
+        }
+      }
+
+      console.log('Creating code block with attrs:', attrs)
       return setBlockType(schema.nodes.code_block, attrs)(state, dispatch)
     }
   }

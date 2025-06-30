@@ -26,6 +26,7 @@ import { markdownToDoc, docToMarkdown } from '../utils/markdown'
 import BoldPlugin from '../plugins/BoldPlugin'
 import ItalicPlugin from '../plugins/ItalicPlugin'
 import StrikethroughPlugin from '../plugins/StrikethroughPlugin'
+import InlineCodePlugin from '../plugins/InlineCodePlugin'
 import HeadingPlugin from '../plugins/HeadingPlugin'
 import BlockquotePlugin from '../plugins/BlockquotePlugin'
 import BulletListPlugin from '../plugins/BulletListPlugin'
@@ -104,7 +105,7 @@ export class FlowMD {
 
     this.options = {
       placeholder: 'Start writing...',
-      toolbar: 'bold,italic,strikethrough,|,heading,blockquote,|,bulletList,orderedList,|,link,image,codeBlock,table,horizontalRule,|,viewMode',
+      toolbar: 'bold,italic,strikethrough,inlineCode,|,heading,blockquote,|,bulletList,orderedList,|,link,image,codeBlock,table,horizontalRule,|,viewMode',
       theme: 'light',
       floatingToolbar: false,
       ...options
@@ -185,6 +186,7 @@ export class FlowMD {
     this.registerPlugin(new BoldPlugin())
     this.registerPlugin(new ItalicPlugin())
     this.registerPlugin(new StrikethroughPlugin())
+    this.registerPlugin(new InlineCodePlugin())
 
     // Register block plugins
     this.registerPlugin(new HeadingPlugin())

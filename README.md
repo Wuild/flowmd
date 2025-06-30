@@ -1,20 +1,20 @@
 # FlowMD
 
-A modern, extensible WYSIWYG Markdown Editor built with ProseMirror.
+A modern, extensible WYSIWYG Markdown Editor built with ProseMirror, following the CommonMark specification.
 
 ## Features
 
 - **WYSIWYG Editing**: Real-time visual markdown editing with instant preview
-- **Extensible Plugin System**: Easy to extend with custom functionality
+- **CommonMark Compliant**: Follows the CommonMark specification for markdown syntax
+- **Extensible Plugin System**: Easy to extend with custom functionality without modifying the core codebase
 - **Rich Formatting**: Support for bold, italic, strikethrough, underline, inline code
 - **Advanced Elements**: Headers, blockquotes, lists, tables, images, links
 - **Code Blocks**: Syntax highlighting with highlight.js
 - **Dual Mode**: Switch between visual editor and source code view
 - **Keyboard Shortcuts**: Full keyboard navigation and shortcuts
-- **Theme Support**: Light, dark, and auto themes
 - **Responsive**: Works on desktop and mobile devices
 
-![Demo Image](https://github.com/wuild/flowmd/demo.png "Demo image")
+![Demo Image](demo.png "Demo image")
 
 
 ## Installation
@@ -112,23 +112,6 @@ const editor = new FlowMD(element, {
 });
 ```
 
-## Themes
-
-FlowMD supports three theme modes:
-
-- `light` - Light theme
-- `dark` - Dark theme  
-- `auto` - Automatically matches system preference
-
-## Browser Support
-
-FlowMD supports all modern browsers:
-
-- Chrome/Chromium 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-
 ## Development
 
 ```bash
@@ -146,6 +129,12 @@ npm run lint
 
 # Run type checking
 npm run type-check
+
+# Format code
+npm run format
+
+# Check code quality (lint, format, type-check)
+npm run code-quality
 ```
 
 ## Contributing
@@ -155,6 +144,19 @@ npm run type-check
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+### Coding Standards
+
+- Follow the CommonMark specification for markdown syntax implementation
+- Use the existing style in main.scss for styling components
+- Utilize the plugin system for adding new features instead of modifying core files
+- Follow consistent naming conventions:
+  - Use camelCase for variables and functions
+  - Use PascalCase for classes and components
+  - Use kebab-case for file names
+- Write clear and concise documentation for all components, functions, and modules
+- Include JSDoc comments for all public APIs
+- Ensure all code passes linting, formatting, and type checking before submitting
 
 ## License
 

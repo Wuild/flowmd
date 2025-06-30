@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		placeholder: 'Start writing your markdown...',
 		// Updated toolbar configuration to include the viewMode plugin
 		toolbar:
-			'bold,italic,strikethrough,|,heading,blockquote,|,bulletList,orderedList,|,link,image,codeBlock,table,horizontalRule,|,viewMode',
+			'bold,italic,strikethrough,|,heading,blockquote,|,bulletList,orderedList,|,link,image,codeBlock, inlineCodeBlock,table,horizontalRule,|,viewMode',
 		theme: 'light',
 		floatingToolbar: false, // Disable floating toolbar for better UX with view switching
 		onChange: (markdown: string) => {
