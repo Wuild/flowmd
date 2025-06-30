@@ -1,14 +1,3 @@
-import { EditorState, Plugin, Transaction } from 'prosemirror-state'
-import { EditorView } from 'prosemirror-view'
-import { Schema, DOMParser, DOMSerializer, Node as ProseMirrorNode } from 'prosemirror-model'
-import { schema } from 'prosemirror-schema-basic'
-import { addListNodes } from 'prosemirror-schema-list'
-import { keymap } from 'prosemirror-keymap'
-import { baseKeymap } from 'prosemirror-commands'
-import { history, undo, redo } from 'prosemirror-history'
-import { dropCursor } from 'prosemirror-dropcursor'
-import { gapCursor } from 'prosemirror-gapcursor'
-import MarkdownIt from 'markdown-it'
 import markdownItAbbr from 'markdown-it-abbr'
 import markdownItAnchor from 'markdown-it-anchor'
 import markdownItContainer from 'markdown-it-container'
@@ -20,7 +9,19 @@ import markdownItMark from 'markdown-it-mark'
 import markdownItSub from 'markdown-it-sub'
 import markdownItSup from 'markdown-it-sup'
 import markdownItTaskLists from 'markdown-it-task-lists'
-import { markdownToDoc, docToMarkdown } from '../utils/markdown'
+import {markdownToDoc, docToMarkdown} from '../utils/markdown'
+
+import {EditorState, Plugin, Transaction} from 'prosemirror-state'
+import {EditorView} from 'prosemirror-view'
+import {Schema, DOMParser, DOMSerializer, Node as ProseMirrorNode} from 'prosemirror-model'
+import {schema} from 'prosemirror-schema-basic'
+import {addListNodes} from 'prosemirror-schema-list'
+import {keymap} from 'prosemirror-keymap'
+import {baseKeymap} from 'prosemirror-commands'
+import {history, undo, redo} from 'prosemirror-history'
+import {dropCursor} from 'prosemirror-dropcursor'
+import {gapCursor} from 'prosemirror-gapcursor'
+import MarkdownIt from 'markdown-it'
 
 // Import plugins
 import BoldPlugin from '../plugins/BoldPlugin'
@@ -142,28 +143,36 @@ export class FlowMD {
         tableRole: 'table',
         isolating: true,
         group: 'block',
-        parseDOM: [{ tag: 'table' }],
-        toDOM() { return ['table', ['tbody', 0]] }
+        parseDOM: [{tag: 'table'}],
+        toDOM() {
+          return ['table', ['tbody', 0]]
+        }
       })
       .addToEnd('table_row', {
         content: '(table_cell | table_header)+',
         tableRole: 'row',
-        parseDOM: [{ tag: 'tr' }],
-        toDOM() { return ['tr', 0] }
+        parseDOM: [{tag: 'tr'}],
+        toDOM() {
+          return ['tr', 0]
+        }
       })
       .addToEnd('table_cell', {
         content: 'paragraph block*',
         tableRole: 'cell',
         isolating: true,
-        parseDOM: [{ tag: 'td' }],
-        toDOM() { return ['td', 0] }
+        parseDOM: [{tag: 'td'}],
+        toDOM() {
+          return ['td', 0]
+        }
       })
       .addToEnd('table_header', {
         content: 'paragraph block*',
         tableRole: 'header_cell',
         isolating: true,
-        parseDOM: [{ tag: 'th' }],
-        toDOM() { return ['th', 0] }
+        parseDOM: [{tag: 'th'}],
+        toDOM() {
+          return ['th', 0]
+        }
       })
 
     this.schema = new Schema({
@@ -250,7 +259,7 @@ export class FlowMD {
       doc: markdownToDoc(initialContent, this.schema, this.markdownParser),
       plugins: [
         history(),
-        keymap({ 'Mod-z': undo, 'Mod-y': redo, 'Mod-Shift-z': redo }),
+        keymap({'Mod-z': undo, 'Mod-y': redo, 'Mod-Shift-z': redo}),
         dropCursor(),
         gapCursor(),
         ...this.getPlugins(),
