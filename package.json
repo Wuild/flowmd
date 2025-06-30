@@ -1,5 +1,5 @@
 {
-  "name": "flowmd",
+  "name": "@wuild/flowmd",
   "version": "1.0.0",
   "description": "FlowMD - A modern WYSIWYG Markdown Editor built with ProseMirror",
   "main": "dist/flowmd.umd.js",
