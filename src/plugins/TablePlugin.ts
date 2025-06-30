@@ -1,204 +1,122 @@
-import {BasePlugin, SchemaContribution, SerializationRule} from './BasePlugin'
-import {FlowMD} from '../editor/FlowMD'
-import icon from '../assets/icons/table-solid.svg'
+import { EditorState, Transaction } from 'prosemirror-state'
+import { EditorView } from 'prosemirror-view'
+import { BasePlugin } from './BasePlugin'
 
+/**
+ * Plugin for table formatting
+ */
 export default class TablePlugin extends BasePlugin {
-  constructor(editor: FlowMD) {
-    super(editor)
-    this.name = 'table'
-    this.title = 'Insert Table'
-    this.icon = icon
-  }
+  /**
+   * The name of the plugin
+   */
+  public readonly name = 'table'
 
-  public getSchemaContribution(): SchemaContribution {
-    return {
-      nodes: {
-        table: {
-          content: 'table_row+',
-          tableRole: 'table',
-          isolating: true,
-          group: 'block',
-          parseDOM: [{tag: 'table'}],
-          toDOM: () => ['table', {class: 'prosemirror-table'}, ['tbody', 0]],
-        },
-        table_row: {
-          content: 'table_cell+',
-          tableRole: 'row',
-          parseDOM: [{tag: 'tr'}],
-          toDOM: () => ['tr', 0],
-        },
-        table_cell: {
-          content: 'paragraph+',
-          attrs: {
-            colspan: {default: 1},
-            rowspan: {default: 1},
-            colwidth: {default: null},
-          },
-          tableRole: 'cell',
-          isolating: true,
-          parseDOM: [
-            {
-              tag: 'td',
-              getAttrs: (node: HTMLElement) => ({
-                colspan: parseInt(node.getAttribute('colspan') || '1'),
-                rowspan: parseInt(node.getAttribute('rowspan') || '1'),
-                colwidth:
-                  node.getAttribute('data-colwidth')?.split(',').map(s => parseInt(s)) ||
-                  null,
-              }),
-            },
-          ],
-          toDOM: (node: unknown) => {
-            const nodeAttrs = (node as { attrs: Record<string, unknown> }).attrs
-            const attrs: Record<string, string> = {}
-            if (nodeAttrs.colspan !== 1) {
-              attrs.colspan = String(nodeAttrs.colspan)
-            }
-            if (nodeAttrs.rowspan !== 1) {
-              attrs.rowspan = String(nodeAttrs.rowspan)
-            }
-            if (nodeAttrs.colwidth) {
-              attrs['data-colwidth'] = (nodeAttrs.colwidth as number[]).join(',')
-            }
-            return ['td', attrs, 0]
-          },
-        },
-        table_header: {
-          content: 'paragraph+',
-          attrs: {
-            colspan: {default: 1},
-            rowspan: {default: 1},
-            colwidth: {default: null},
-          },
-          tableRole: 'header_cell',
-          isolating: true,
-          parseDOM: [
-            {
-              tag: 'th',
-              getAttrs: (node: HTMLElement) => ({
-                colspan: parseInt(node.getAttribute('colspan') || '1'),
-                rowspan: parseInt(node.getAttribute('rowspan') || '1'),
-                colwidth:
-                  node.getAttribute('data-colwidth')?.split(',').map(s => parseInt(s)) ||
-                  null,
-              }),
-            },
-          ],
-          toDOM: (node: unknown) => {
-            const nodeAttrs = (node as { attrs: Record<string, unknown> }).attrs
-            const attrs: Record<string, string> = {}
-            if (nodeAttrs.colspan !== 1) {
-              attrs.colspan = String(nodeAttrs.colspan)
-            }
-            if (nodeAttrs.rowspan !== 1) {
-              attrs.rowspan = String(nodeAttrs.rowspan)
-            }
-            if (nodeAttrs.colwidth) {
-              attrs['data-colwidth'] = (nodeAttrs.colwidth as number[]).join(',')
-            }
-            return ['th', attrs, 0]
-          },
-        },
-      },
-    }
-  }
-
-  public configureMarkdownIt(markdownIt: unknown): void {
-    // Enable table support in markdown-it
-    ;(markdownIt as { enable: (feature: string) => void }).enable('table')
-  }
-
-  public getSerializationRules(): SerializationRule {
-    return {
-      nodes: {
-        table: (state: unknown, node: unknown) => {
-          const stateObj = state as { renderContent: (node: unknown) => void; closeBlock: (node: unknown) => void }
-          stateObj.renderContent(node)
-          stateObj.closeBlock(node)
-        },
-        table_row: (state: unknown, node: unknown, _parent?: unknown, _index?: unknown) => {
-          const stateObj = state as { write: (text: string) => void }
-          stateObj.write('|')
-          const nodeObj = node as { childCount: number; child: (i: number) => unknown }
-          for (let i = 0; i < nodeObj.childCount; i++) {
-            if (i) {
-              stateObj.write('|')
-            }
-            const cell = nodeObj.child(i)
-            const cellText = (cell as { textContent?: string }).textContent?.trim() || ''
-            stateObj.write(` ${cellText} `)
-          }
-          stateObj.write('|')
-          stateObj.write('\n')
-        },
-        table_header: (state: unknown, node: unknown, _parent?: unknown, _index?: unknown) => {
-          const stateObj = state as { write: (text: string) => void; ensureNewLine: () => void }
-          stateObj.write('|')
-
-          const nodeObj = node as { textContent?: string }
-          const cellText = nodeObj.textContent?.trim() || ''
-          stateObj.write(` ${cellText} `)
-          stateObj.write('|')
-          stateObj.ensureNewLine()
-        },
-        table_cell: (state: unknown, node: unknown, _parent?: unknown, _index?: unknown) => {
-          const stateObj = state as { write: (text: string) => void; ensureNewLine: () => void }
-          stateObj.write('|')
-
-          const nodeObj = node as { textContent?: string }
-          const cellText = nodeObj.textContent?.trim() || ''
-          stateObj.write(` ${cellText} `)
-          stateObj.write('|')
-          stateObj.ensureNewLine()
-        },
-      },
-    }
-  }
-
-  execute(): void {
-    // eslint-disable-next-line no-alert
-    const rows = prompt('Number of rows:', '3')
-    // eslint-disable-next-line no-alert
-    const cols = prompt('Number of columns:', '3')
-
-    if (rows && cols && this.editor.view) {
-      const numRows = parseInt(rows)
-      const numCols = parseInt(cols)
-
-      // Create a simple table markdown
-      let tableMarkdown = ''
-
-      // Header row
-      tableMarkdown += '|'
-      for (let c = 0; c < numCols; c++) {
-        tableMarkdown += ` Header ${c + 1} |`
+  /**
+   * Create a new TablePlugin instance
+   */
+  constructor() {
+    super({
+      toolbarButton: {
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>',
+        tooltip: 'Insert Table',
+        action: (view: EditorView) => this.showTableDialog(view),
+        isActive: (state: EditorState) => this.isActive(state, 'table')
       }
-      tableMarkdown += '\n'
+    })
+  }
 
-      // Separator row
-      tableMarkdown += '|'
-      for (let c = 0; c < numCols; c++) {
-        tableMarkdown += ' --- |'
-      }
-      tableMarkdown += '\n'
+  /**
+   * Show the table dialog
+   * @param view The editor view
+   * @returns Whether the action was successful
+   */
+  private showTableDialog(view: EditorView): boolean {
+    const { state, dispatch } = view
+    const { schema } = state
 
-      // Data rows
-      for (let r = 1; r < numRows; r++) {
-        tableMarkdown += '|'
-        for (let c = 0; c < numCols; c++) {
-          tableMarkdown += ` Cell ${r + 1},${c + 1} |`
-        }
-        tableMarkdown += '\n'
+    // Ask for the number of rows and columns
+    const rows = window.prompt('Enter number of rows:', '3')
+
+    if (rows === null) {
+      // User cancelled
+      return false
+    }
+
+    const rowCount = parseInt(rows, 10)
+
+    if (isNaN(rowCount) || rowCount < 1) {
+      window.alert('Please enter a valid number of rows (minimum 1).')
+      return false
+    }
+
+    const cols = window.prompt('Enter number of columns:', '3')
+
+    if (cols === null) {
+      // User cancelled
+      return false
+    }
+
+    const colCount = parseInt(cols, 10)
+
+    if (isNaN(colCount) || colCount < 1) {
+      window.alert('Please enter a valid number of columns (minimum 1).')
+      return false
+    }
+
+    // Create the table
+    return this.insertTable(view, rowCount, colCount)
+  }
+
+  /**
+   * Insert a table
+   * @param view The editor view
+   * @param rowCount The number of rows
+   * @param colCount The number of columns
+   * @returns Whether the action was successful
+   */
+  private insertTable(view: EditorView, rowCount: number, colCount: number): boolean {
+    const { state, dispatch } = view
+    const { schema } = state
+
+    // Check if table nodes are defined in the schema
+    if (!schema.nodes.table || !schema.nodes.table_row ||
+        !schema.nodes.table_cell || !schema.nodes.table_header) {
+      console.error('Table nodes are not defined in the schema')
+      window.alert('Tables are not supported in this editor configuration.')
+      return false
+    }
+
+    // Create table header cells
+    const headerCells = []
+    for (let i = 0; i < colCount; i++) {
+      const cell = schema.nodes.table_header.createAndFill()
+      if (cell) headerCells.push(cell)
+    }
+
+    // Create table header row
+    const headerRow = schema.nodes.table_row.create(null, headerCells as any)
+
+    // Create table body rows
+    const rows = [headerRow]
+
+    for (let i = 0; i < rowCount - 1; i++) {
+      const cells = []
+
+      for (let j = 0; j < colCount; j++) {
+        const cell = schema.nodes.table_cell.createAndFill()
+        if (cell) cells.push(cell)
       }
 
-      const {state, dispatch} = this.editor.view
-      const node = state.schema.text(tableMarkdown)
-      dispatch(state.tr.replaceSelectionWith(node, false))
-      this.editor.view.focus()
+      rows.push(schema.nodes.table_row.create(null, cells as any))
     }
-  }
 
-  isActive(): boolean {
-    return false // Tables are not toggleable
+    // Create the table
+    const table = schema.nodes.table.create(null, rows)
+
+    // Insert the table
+    const tr = state.tr.replaceSelectionWith(table)
+    dispatch(tr)
+
+    return true
   }
 }

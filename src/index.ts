@@ -24,4 +24,48 @@ document.addEventListener('DOMContentLoaded', () => {
 			console.log('Markdown updated:', markdown.length + ' characters')
 		},
 	})
+
+	// Add some basic styling to the form example
+	const style = document.createElement('style')
+	style.textContent = `
+		.form-example {
+			margin-top: 2rem;
+			padding: 1.5rem;
+			background-color: #f9fafb;
+			border-radius: 0.5rem;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		}
+		.form-controls {
+			margin-top: 1rem;
+			display: flex;
+			gap: 1rem;
+			align-items: center;
+		}
+		.submit-button {
+			margin-left: auto;
+			padding: 0.5rem 1rem;
+			background-color: #3b82f6;
+			color: white;
+			border: none;
+			border-radius: 0.25rem;
+			cursor: pointer;
+		}
+		.submit-button:hover {
+			background-color: #2563eb;
+		}
+		.result-box {
+			margin-top: 1rem;
+			padding: 1rem;
+			background-color: white;
+			border: 1px solid #e5e7eb;
+			border-radius: 0.25rem;
+			overflow: auto;
+			max-height: 300px;
+		}
+		pre {
+			white-space: pre-wrap;
+			word-break: break-word;
+		}
+	`
+	document.head.appendChild(style)
 })

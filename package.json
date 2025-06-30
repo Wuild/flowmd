@@ -30,16 +30,16 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/flowmd.git"
+    "url": "https://github.com/wuild/flowmd.git"
   },
   "bugs": {
-    "url": "https://github.com/YOUR_USERNAME/flowmd/issues"
+    "url": "https://github.com/wuild/flowmd/issues"
   },
-  "homepage": "https://github.com/YOUR_USERNAME/flowmd#readme",
+  "homepage": "https://github.com/wuild/flowmd#readme",
   "license": "MIT",
   "author": {
-    "name": "Your Name",
-    "email": "your.email@example.com"
+    "name": "Wuild",
+    "email": "wuild@voracious.se"
   },
   "engines": {
     "node": ">=16.0.0"
@@ -74,6 +74,7 @@
     "@babel/preset-typescript": "^7.22.0",
     "@types/jest": "^29.5.0",
     "@types/markdown-it": "^13.0.9",
+    "@types/markdown-it-container": "^2.0.10",
     "@types/node": "^20.4.0",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",

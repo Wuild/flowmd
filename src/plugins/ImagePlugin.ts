@@ -1,67 +1,78 @@
-import { Command } from 'prosemirror-state'
-
-import icon from '../assets/icons/image-solid.svg'
+import { EditorState, Transaction } from 'prosemirror-state'
+import { EditorView } from 'prosemirror-view'
 import { BasePlugin } from './BasePlugin'
-import { FlowMD } from '../editor/FlowMD'
 
+/**
+ * Plugin for inserting images
+ */
 export default class ImagePlugin extends BasePlugin {
-	constructor(editor: FlowMD) {
-		super(editor)
-		this.name = 'image'
-		this.title = 'Insert Image (Ctrl+Shift+I)'
-		this.icon = icon
-	}
+  /**
+   * The name of the plugin
+   */
+  public readonly name = 'image'
 
-	public execute(): void {
-		// eslint-disable-next-line no-alert
-		const url = prompt('Enter image URL:')
-		if (url && this.editor.view) {
-			// eslint-disable-next-line no-alert
-			const alt = prompt('Enter image description (alt text):', 'Image')
-			// eslint-disable-next-line no-alert
-			const title = prompt('Enter image title (optional):')
+  /**
+   * Create a new ImagePlugin instance
+   */
+  constructor() {
+    super({
+      toolbarButton: {
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>',
+        tooltip: 'Insert Image',
+        action: (view: EditorView) => this.showImageDialog(view),
+        isActive: () => false // Images don't have an active state
+      }
+    })
+  }
 
-			let imageMarkdown = `![${alt || 'Image'}](${url}`
-			if (title) {
-				imageMarkdown += ` "${title}"`
-			}
-			imageMarkdown += ')'
+  /**
+   * Show the image dialog
+   * @param view The editor view or an object with state and dispatch
+   * @returns Whether the action was successful
+   */
+  private showImageDialog(view: EditorView | { state: EditorState, dispatch?: (tr: Transaction) => void }): boolean {
+    const { state, dispatch } = view
+    const { schema } = state
 
-			const { state, dispatch } = this.editor.view
-			const node = state.schema.text(imageMarkdown)
-			dispatch(state.tr.replaceSelectionWith(node, false))
-			this.editor.view.focus()
-		}
-	}
+    // Create a simple dialog for entering the image URL and alt text
+    const src = window.prompt('Enter image URL:')
 
-	public isActive(): boolean {
-		return false // Images are not toggleable
-	}
+    if (src === null) {
+      // User cancelled
+      return false
+    }
 
-	public getKeymap(): { [key: string]: Command } {
-		return {
-			'Mod-Shift-i': (state, dispatch) => {
-				if (!dispatch) return false
+    if (src === '') {
+      // Empty URL, do nothing
+      return false
+    }
 
-				// eslint-disable-next-line no-alert
-				const url = prompt('Enter image URL:')
-				if (!url) return false
+    const alt = window.prompt('Enter image description (alt text):', '')
 
-				// eslint-disable-next-line no-alert
-				const alt = prompt('Enter image description (alt text):', 'Image')
-				// eslint-disable-next-line no-alert
-				const title = prompt('Enter image title (optional):')
+    if (alt === null) {
+      // User cancelled
+      return false
+    }
 
-				let imageMarkdown = `![${alt || 'Image'}](${url}`
-				if (title) {
-					imageMarkdown += ` "${title}"`
-				}
-				imageMarkdown += ')'
+    const title = window.prompt('Enter image title (optional):', '')
 
-				const node = state.schema.text(imageMarkdown)
-				dispatch(state.tr.replaceSelectionWith(node, false))
-				return true
-			},
-		}
-	}
+    if (title === null) {
+      // User cancelled
+      return false
+    }
+
+    // Insert the image
+    if (dispatch) {
+      const imageNode = schema.nodes.image.create({
+        src,
+        alt: alt || '',
+        title: title || ''
+      })
+
+      const tr = state.tr.replaceSelectionWith(imageNode)
+      dispatch(tr)
+    }
+
+    return true
+  }
 }

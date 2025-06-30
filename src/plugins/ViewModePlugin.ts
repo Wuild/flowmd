@@ -1,174 +1,74 @@
-import {Command} from 'prosemirror-state'
+import { EditorState, Transaction } from 'prosemirror-state'
+import { EditorView } from 'prosemirror-view'
+import { BasePlugin } from './BasePlugin'
 
-import {FlowMD} from '../editor/FlowMD'
-
-import {BasePlugin} from './BasePlugin'
-
+/**
+ * Plugin for toggling between WYSIWYG and source modes
+ */
 export default class ViewModePlugin extends BasePlugin {
-  private isSourceMode: boolean = false
-  private updateTimeout: NodeJS.Timeout | undefined
+  /**
+   * The name of the plugin
+   */
+  public readonly name = 'viewMode'
 
-  constructor(editor: FlowMD) {
-    super(editor)
-    // No need to setup source view here since FlowMD always creates it
-  }
+  /**
+   * Whether the editor is in source mode
+   */
+  private isSourceMode = false
 
-  public createButton(): HTMLButtonElement {
-    const button = document.createElement('button')
-    button.innerHTML = `
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="16 18 22 12 16 6"></polyline>
-                <polyline points="8 6 2 12 8 18"></polyline>
-            </svg>
-        `
-    button.title = 'Toggle Source View'
-    button.type = 'button'
-    button.className = 'toolbar-button'
-    button.addEventListener('click', (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      this.toggleView()
+  /**
+   * Create a new ViewModePlugin instance
+   */
+  constructor() {
+    super({
+      toolbarButton: {
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9l3 3-3 3"></path><path d="M16 15l-3-3 3-3"></path><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>',
+        tooltip: 'Toggle Source Mode (Ctrl+Shift+M)',
+        action: (view: EditorView) => this.toggleViewMode(view),
+        isActive: (state: EditorState) => this.isSourceMode
+      },
+      keymap: {
+        'Mod-Shift-m': (state: EditorState, dispatch?: (tr: Transaction) => void, view?: EditorView) => {
+          if (view) {
+            this.toggleViewMode(view)
+            return true
+          }
+          return false
+        }
+      }
     })
-
-    // Store reference to plugin for state updates
-    ;(button as HTMLButtonElement & { _plugin: ViewModePlugin })._plugin = this
-
-    return button
   }
 
-  private toggleView(): void {
+  /**
+   * Toggle between WYSIWYG and source modes
+   * @param view The editor view
+   * @returns Whether the action was successful
+   */
+  private toggleViewMode(view: EditorView): boolean {
+    // Get the FlowMD instance from the view
+    const flowMD = (view as any).flowMD
+
+    if (!flowMD) {
+      console.error('FlowMD instance not found on view')
+      return false
+    }
+
+    // Toggle source mode
+    flowMD.toggleSourceMode()
+
+    // Update the state
     this.isSourceMode = !this.isSourceMode
 
-    if (this.isSourceMode) {
-      // Switch to source mode
-      this.switchToSourceMode()
-    } else {
-      // Switch to editor mode
-      this.switchToEditorMode()
-    }
-
-    // Update button appearance
-    this.updateButtonState()
-  }
-
-  private switchToSourceMode(): void {
-    // Hide editor, show source
-    if (this.editor.editorWrapper) {
-      this.editor.editorWrapper.classList.add('hidden')
-    }
-    if (this.editor.sourceWrapper) {
-      this.editor.sourceWrapper.classList.remove('hidden')
-    }
-
-    if (this.editor.sourceTextarea) {
-      // Get clean markdown without potential duplications
-      const markdown = this.editor.getMarkdown()
-      this.editor.sourceTextarea.value = markdown
-      // Focus and adjust height
-      setTimeout(() => {
-        this.editor.sourceTextarea?.focus()
-        this.adjustTextareaHeight()
-      }, 100)
-    }
-  }
-
-  private switchToEditorMode(): void {
-    // Only update editor if content actually changed
-    if (this.editor.sourceTextarea) {
-      const currentMarkdown = this.editor.getMarkdown()
-      const textareaContent = this.editor.sourceTextarea.value
-
-      // Only set content if it's different to avoid unnecessary re-parsing
-      if (currentMarkdown !== textareaContent) {
-        this.editor.setContent(textareaContent)
+    // Update the toolbar button
+    const button = document.querySelector(`.toolbar-button[title="Toggle Source Mode (Ctrl+Shift+M)"]`)
+    if (button) {
+      if (this.isSourceMode) {
+        button.classList.add('active')
+      } else {
+        button.classList.remove('active')
       }
     }
 
-    // Show editor, hide source
-    if (this.editor.sourceWrapper) {
-      this.editor.sourceWrapper.classList.add('hidden')
-    }
-    if (this.editor.editorWrapper) {
-      this.editor.editorWrapper.classList.remove('hidden')
-    }
-
-    // Focus editor
-    setTimeout(() => {
-      this.editor.view?.focus()
-    }, 100)
-  }
-
-  private adjustTextareaHeight(): void {
-    if (!this.editor.sourceTextarea) {
-      return
-    }
-
-    // Auto-adjust height based on content
-    this.editor.sourceTextarea.style.height = 'auto'
-    const scrollHeight = this.editor.sourceTextarea.scrollHeight
-    const minHeight = 384 // h-96 equivalent
-    const maxHeight = window.innerHeight * 0.6
-
-    this.editor.sourceTextarea.style.height =
-      Math.min(Math.max(scrollHeight, minHeight), maxHeight) + 'px'
-  }
-
-  public execute(): void {
-    this.toggleView()
-  }
-
-  private updateButtonState(): void {
-    // Find the button and update its appearance based on current mode
-    const buttons = document.querySelectorAll('.toolbar-button')
-    buttons.forEach(button => {
-      const plugin = (button as any)._plugin
-      if (plugin === this) {
-        if (this.isSourceMode) {
-          button.classList.add('active')
-        } else {
-          button.classList.remove('active')
-        }
-      }
-    })
-  }
-
-  public isActive(): boolean {
-    return this.isSourceMode
-  }
-
-  // Add keymap for view mode toggle
-  public getKeymap(): { [key: string]: Command } {
-    return {
-      'Mod-Shift-m': (state, dispatch) => {
-        this.isSourceMode = !this.isSourceMode
-
-        if (this.isSourceMode) {
-          // Switch to source mode
-          this.switchToSourceMode()
-        } else {
-          // Switch to editor mode
-          this.switchToEditorMode()
-        }
-
-        // Update button appearance
-        this.updateButtonState()
-        return true
-      },
-    }
-  }
-
-  // Public method to get current view mode
-  public getViewMode(): 'editor' | 'source' {
-    return this.isSourceMode ? 'source' : 'editor'
-  }
-
-  // Public method to set view mode programmatically
-  public setViewMode(mode: 'editor' | 'source'): void {
-    if (
-      (mode === 'source' && !this.isSourceMode) ||
-      (mode === 'editor' && this.isSourceMode)
-    ) {
-      this.toggleView()
-    }
+    return true
   }
 }

@@ -122,6 +122,7 @@ declare module 'markdown-it-emoji' {
 		shortcuts?: Record<string, string | string[]>
 	}
 
-	const plugin: PluginWithOptions<EmojiOptions>
-	export = plugin
+	export const bare: PluginWithOptions<EmojiOptions>
+	export const full: PluginWithOptions<EmojiOptions>
+	export const light: PluginWithOptions<EmojiOptions>
 }

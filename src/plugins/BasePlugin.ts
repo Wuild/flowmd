@@ -1,112 +1,133 @@
-import MarkdownIt from 'markdown-it'
-import { NodeSpec, MarkSpec } from 'prosemirror-model'
-import { Command } from 'prosemirror-state'
+import { EditorState, Plugin, Transaction } from 'prosemirror-state'
+import { EditorView } from 'prosemirror-view'
 
-import { FlowMD } from '../editor/FlowMD'
-
-export interface SchemaContribution {
-	nodes?: { [name: string]: NodeSpec }
-	marks?: { [name: string]: MarkSpec }
-}
-
-export interface MarkdownItPluginConfig {
-	plugin: any
-	name: string
-	options?: any
-}
-
-export interface ParsingRule {
-	// Custom pre-processing of markdown before markdown-it
-	preProcess?: (markdown: string) => string
-	// Custom post-processing of HTML after markdown-it
-	postProcess?: (html: string) => string
-}
-
-export interface SerializationRule {
-	nodes?: {
-		[name: string]: (state: any, node: any, parent?: any, index?: number) => void
-	}
-	marks?: {
-		[name: string]: {
-			open: string | ((state: any, mark: any) => string)
-			close: string | ((state: any, mark: any) => string)
-			mixable?: boolean
-			expelEnclosingWhitespace?: boolean
-			escape?: boolean
-		}
-	}
-}
-
+/**
+ * Base class for all editor plugins
+ * This provides a common interface and functionality for all plugins
+ */
 export abstract class BasePlugin {
-	protected editor: FlowMD
-	protected name: string = ''
-	protected title: string = ''
-	protected icon: string = ''
+  /**
+   * The name of the plugin, used for identification in the toolbar
+   */
+  public abstract readonly name: string
 
-	constructor(editor: FlowMD) {
-		this.editor = editor
-	}
+  /**
+   * The toolbar button configuration
+   * If not provided, the plugin won't have a toolbar button
+   */
+  public readonly toolbarButton?: {
+    /**
+     * The HTML for the button icon (can be SVG or text)
+     */
+    icon: string
 
-	// Schema contributions
-	public getSchemaContribution(): SchemaContribution {
-		return {}
-	}
+    /**
+     * The tooltip text for the button
+     */
+    tooltip: string
 
-	// Markdown-it plugin contributions
-	public getMarkdownItPlugins(): MarkdownItPluginConfig[] {
-		return []
-	}
+    /**
+     * The action to perform when the button is clicked
+     * @param view The editor view
+     * @returns Whether the action was successful
+     */
+    action: (view: EditorView) => boolean
 
-	// Custom parsing rules
-	public getParsingRules(): ParsingRule {
-		return {}
-	}
+    /**
+     * Check if the button should be shown as active
+     * @param state The editor state
+     * @returns Whether the button should be shown as active
+     */
+    isActive?: (state: EditorState) => boolean
+  }
 
-	// Custom serialization rules
-	public getSerializationRules(): SerializationRule {
-		return {}
-	}
+  /**
+   * The ProseMirror plugins to add to the editor
+   */
+  public readonly plugins?: Plugin[]
 
-	// Configure markdown-it instance (called after all plugins are added)
-	public configureMarkdownIt(_markdownIt: MarkdownIt): void {
-		// Override in subclasses if needed
-	}
+  /**
+   * The keymap for the plugin
+   * Keys are in the format 'Mod-b' for Ctrl/Cmd+B
+   * Values are command functions that take state and dispatch
+   */
+  public readonly keymap?: { [key: string]: (state: EditorState, dispatch?: (tr: Transaction) => void, view?: EditorView) => boolean }
 
-	public createButton(): HTMLButtonElement {
-		const button = document.createElement('button')
-		button.className = 'toolbar-button'
-		button.type = 'button'
-		button.title = this.title
-		button.innerHTML = this.icon
-		;(button as HTMLButtonElement & { _plugin: BasePlugin })._plugin = this
+  /**
+   * Create a new plugin instance
+   * @param options Options for the plugin
+   */
+  constructor(options: Partial<BasePlugin> = {}) {
+    // Copy options to this instance
+    Object.assign(this, options)
+  }
 
-		button.addEventListener('click', (e: Event) => {
-			e.preventDefault()
-      e.stopPropagation()
-			this.execute()
-		})
+  /**
+   * Check if a mark or node is active at the current selection
+   * @param state The editor state
+   * @param type The mark or node type name
+   * @param attrs Optional attributes to check
+   * @returns Whether the mark or node is active
+   */
+  protected isActive(state: EditorState, type: string, attrs: Record<string, any> = {}): boolean {
+    const { selection } = state
 
-		return button
-	}
+    // Check if it's a mark
+    if (state.schema.marks[type]) {
+      const mark = state.schema.marks[type]
 
-	public abstract execute(): void
+      // Check if the mark exists in the selection
+      if (selection.empty) {
+        return !!mark.isInSet(state.storedMarks || selection.$from.marks())
+      }
 
-	public isActive(): boolean {
-		// Override in subclasses
-		return false
-	}
+      // Check if the mark exists in the selected range
+      let hasMatch = false
+      state.doc.nodesBetween(selection.from, selection.to, node => {
+        if (node.marks.some(m => m.type === mark && this.matchAttributes(m.attrs, attrs))) {
+          hasMatch = true
+          return false // Stop traversal
+        }
+        return true
+      })
 
-	public isEnabled(): boolean {
-		// Override in subclasses
-		return true
-	}
+      return hasMatch
+    }
 
-	getToolbarButtons(): HTMLButtonElement[] {
-		return []
-	}
+    // Check if it's a node
+    if (state.schema.nodes[type]) {
+      const node = state.schema.nodes[type]
 
-	// Keymap contributions - return keyboard shortcuts for this plugin
-	public getKeymap(): { [key: string]: Command } {
-		return {}
-	}
+      // Check if the current node is of this type
+      const $from = selection.$from
+      const $to = selection.$to
+      let hasMatch = false
+
+      state.doc.nodesBetween($from.pos, $to.pos, (node, pos) => {
+        if (node.type === state.schema.nodes[type] && this.matchAttributes(node.attrs, attrs)) {
+          hasMatch = true
+          return false // Stop traversal
+        }
+        return true
+      })
+
+      return hasMatch
+    }
+
+    return false
+  }
+
+  /**
+   * Check if attributes match
+   * @param nodeAttrs The node attributes
+   * @param attrs The attributes to match
+   * @returns Whether the attributes match
+   */
+  private matchAttributes(nodeAttrs: Record<string, any>, attrs: Record<string, any>): boolean {
+    // If no attributes to match, consider it a match
+    if (Object.keys(attrs).length === 0) return true
+
+    // Check if all required attributes match
+    return Object.entries(attrs).every(([key, value]) => nodeAttrs[key] === value)
+  }
 }

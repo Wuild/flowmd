@@ -10,7 +10,7 @@ By participating in this project, you agree to abide by our Code of Conduct. Ple
 
 ### Reporting Bugs
 
-1. Check if the bug has already been reported in [Issues](https://github.com/YOUR_USERNAME/flowmd/issues)
+1. Check if the bug has already been reported in [Issues](https://github.com/wuild/flowmd/issues)
 2. If not, create a new issue with:
    - Clear title and description
    - Steps to reproduce
@@ -20,7 +20,7 @@ By participating in this project, you agree to abide by our Code of Conduct. Ple
 
 ### Suggesting Features
 
-1. Check existing [Issues](https://github.com/YOUR_USERNAME/flowmd/issues) for similar requests
+1. Check existing [Issues](https://github.com/wuild/flowmd/issues) for similar requests
 2. Create a new issue with:
    - Clear description of the feature
    - Use cases and benefits
@@ -31,7 +31,7 @@ By participating in this project, you agree to abide by our Code of Conduct. Ple
 1. Fork the repository
 2. Clone your fork:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/flowmd.git
+   git clone https://github.com/wuild/flowmd.git
    cd flowmd
    ```
 

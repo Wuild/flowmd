@@ -14,6 +14,9 @@ A modern, extensible WYSIWYG Markdown Editor built with ProseMirror.
 - **Theme Support**: Light, dark, and auto themes
 - **Responsive**: Works on desktop and mobile devices
 
+![Demo Image](https://github.com/wuild/flowmd/demo.png "Demo image")
+
+
 ## Installation
 
 ```bash
