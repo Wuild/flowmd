@@ -1,169 +1,186 @@
-# FlowMD
+# FlowMD - WYSIWYG Markdown Editor
 
-A modern, extensible WYSIWYG Markdown Editor built with ProseMirror, following the CommonMark specification.
+FlowMD is a powerful WYSIWYG Markdown editor built with ProseMirror that provides a rich editing experience with a plugin system for extensibility.
+
+![FlowMD Demo](flowmd.png)
 
 ## Features
 
-- **WYSIWYG Editing**: Real-time visual markdown editing with instant preview
-- **CommonMark Compliant**: Follows the CommonMark specification for markdown syntax
-- **Extensible Plugin System**: Easy to extend with custom functionality without modifying the core codebase
-- **Rich Formatting**: Support for bold, italic, strikethrough, underline, inline code
-- **Advanced Elements**: Headers, blockquotes, lists, tables, images, links
-- **Code Blocks**: Syntax highlighting with highlight.js
-- **Dual Mode**: Switch between visual editor and source code view
-- **Keyboard Shortcuts**: Full keyboard navigation and shortcuts
-- **Responsive**: Works on desktop and mobile devices
-
-![Demo Image](demo.png "Demo image")
-
+- **WYSIWYG Editing**: Edit Markdown with a rich text interface
+- **Real-time Preview**: See your formatted content as you type
+- **Markdown Support**: Full Markdown syntax support
+- **Conversion Utilities**: Convert between Markdown and HTML
+- **Plugin System**: Extend the editor with custom plugins
+- **Optional Toolbar**: Format text with an intuitive toolbar with configurable buttons
+- **Toolbar Dropdowns**: Dropdown menus for complex options like heading levels
+- **Toolbar Layout**: Customize toolbar with separators and spacers for better organization
+- **Form Integration**: Seamless integration with HTML forms for easy content submission
+- **Flexible Height Settings**: Control editor height with min, max, and fixed height options
+- **PopperJS Integration**: Dropdowns are positioned using PopperJS for better UX
+- **TypeScript Support**: Built with TypeScript for better developer experience
+- **SASS Styling**: Easily customize the look and feel with SASS
 
 ## Installation
 
+Install FlowMD using npm:
+
 ```bash
-npm install flowmd
+npm install @wuild/flowmd
 ```
 
-## Basic Usage
+Or using yarn:
 
-```typescript
-import { FlowMD } from 'flowmd';
-import 'flowmd/flowmd.css';
+```bash
+yarn add @wuild/flowmd
+```
 
-// Initialize editor
-const editor = new FlowMD(document.getElementById('editor'), {
+## Usage
+
+### Basic Usage
+
+```javascript
+import { createEditor } from '@wuild/flowmd';
+import '@wuild/flowmd/styles/editor.css';
+
+// Get the container element
+const editorElement = document.getElementById('editor');
+
+// Create the editor
+const editor = createEditor({
+  element: editorElement,
+  content: '# Hello World',
+  toolbar: true
+});
+```
+
+### Configuration Options
+
+```javascript
+const editor = createEditor({
+  // Required: The container element where the editor will be mounted
+  element: document.getElementById('editor'),
+
+  // Optional: Initial content in markdown format
+  content: '# Getting Started\n\nThis is a **markdown** editor.',
+
+  // Optional: Placeholder text when editor is empty
   placeholder: 'Start writing...',
-  theme: 'auto',
-  toolbar: 'bold,italic,|,heading,blockquote,|,image,link',
-  onChange: (markdown) => {
+
+  // Optional: Toolbar configuration
+  // true = show all buttons, string = configure which buttons to show
+  toolbar: "heading,bold,italic,|,link,image,|,bullet_list,ordered_list",
+
+  // Optional: Container element for the toolbar
+  toolbarContainer: document.getElementById('custom-toolbar'),
+
+  // Optional: Name attribute for hidden textarea to sync markdown content for form submission
+  textarea: 'content',
+
+  // Optional: Height settings
+  height: '400px',      // Fixed height
+  maxHeight: '600px',   // Maximum height
+  minHeight: '200px',   // Minimum height
+
+  // Optional: Plugin-specific options
+  pluginOptions: {
+    // Options for the image plugin
+    image: {
+      upload: true,
+      uploadUrl: "https://api.example.com/upload"
+    }
+  },
+
+  // Optional: Callback when content changes
+  onChange: (markdown, html) => {
     console.log('Content changed:', markdown);
   }
 });
 ```
 
-### HTML
+### Working with Content
 
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <link rel="stylesheet" href="node_modules/flowmd/dist/flowmd.css">
-</head>
-<body>
-  <div id="editor"></div>
-  <script src="node_modules/flowmd/dist/flowmd.umd.js"></script>
-  <script>
-    new FlowMD.FlowMD(document.getElementById('editor'));
-  </script>
-</body>
-</html>
-```
+```javascript
+// Get content as Markdown
+const markdown = editor.getMarkdown();
 
-## Configuration Options
+// Get content as HTML
+const html = editor.getHTML();
 
-```typescript
-interface EditorOptions {
-  placeholder?: string;
-  onChange?: (markdown: string) => void;
-  toolbar?: string; // e.g., "bold,italic,|,heading,blockquote"
-  theme?: 'light' | 'dark' | 'auto';
-  floatingToolbar?: boolean;
-  minHeight?: string;
-  maxHeight?: string;
-  height?: string;
-  autoResize?: boolean;
-  debug?: boolean;
-}
-```
+// Set content programmatically
+editor.setContent('# New Content');
 
-## Keyboard Shortcuts
-
-- **Ctrl+B** / **Cmd+B**: Bold text
-- **Ctrl+I** / **Cmd+I**: Italic text
-- **Ctrl+U** / **Cmd+U**: Underline text
-- **Ctrl+`** / **Cmd+`**: Inline code
-- **Ctrl+K** / **Cmd+K**: Insert link
-- **Ctrl+Shift+I** / **Cmd+Shift+I**: Insert image
-- **Ctrl+Shift+M** / **Cmd+Shift+M**: Toggle source view
-- **Ctrl+Alt+1-6** / **Cmd+Alt+1-6**: Headings 1-6
-- **Ctrl+Alt+0** / **Cmd+Alt+0**: Paragraph
-- **Ctrl+Shift+7** / **Cmd+Shift+7**: Ordered list
-- **Ctrl+Shift+8** / **Cmd+Shift+8**: Bullet list
-- **Ctrl+Shift+9** / **Cmd+Shift+9**: Blockquote
-
-## API Reference
-
-### Methods
-
-- `getMarkdown()` - Get current markdown content
-- `setContent(markdown: string)` - Set editor content
-- `focus()` - Focus the editor
-- `destroy()` - Clean up the editor
-
-### Events
-
-The `onChange` callback is triggered whenever the content changes:
-
-```typescript
-const editor = new FlowMD(element, {
-  onChange: (markdown) => {
-    // Handle content changes
-    console.log(markdown);
-  }
+// Listen for content changes
+editor.addEventListener('change', ({ markdown, html }) => {
+  console.log('Content changed:', markdown);
 });
 ```
 
-## Development
+## Documentation
 
-```bash
-# Install dependencies
-npm install
+FlowMD comes with comprehensive documentation to help you get started and make the most of the editor:
 
-# Start development server
-npm run dev
+- [User Guide](docs/user-guide.md) - Learn how to use FlowMD in your projects
+- [API Reference](docs/api-reference.md) - Comprehensive reference for the FlowMD API
+- [Plugin Development Guide](docs/plugin-development.md) - Learn how to extend FlowMD with custom plugins
+- [Documentation Index](docs/README.md) - Overview of all documentation resources
 
-# Build for production
-npm run build
+## Building from Source
 
-# Run linting
-npm run lint
+To build FlowMD from source:
 
-# Run type checking
-npm run type-check
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/flowmd.git
+   cd flowmd
+   ```
 
-# Format code
-npm run format
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-# Check code quality (lint, format, type-check)
-npm run code-quality
-```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Build for production:
+   ```bash
+   npm run build
+   ```
 
 ## Contributing
 
+Contributions are welcome! Here's how you can contribute:
+
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin feature/my-feature`
+5. Submit a pull request
 
-### Coding Standards
+Please make sure to update tests as appropriate and follow the code style guidelines.
 
-- Follow the CommonMark specification for markdown syntax implementation
-- Use the existing style in main.scss for styling components
-- Utilize the plugin system for adding new features instead of modifying core files
-- Follow consistent naming conventions:
-  - Use camelCase for variables and functions
-  - Use PascalCase for classes and components
-  - Use kebab-case for file names
-- Write clear and concise documentation for all components, functions, and modules
-- Include JSDoc comments for all public APIs
-- Ensure all code passes linting, formatting, and type checking before submitting
+### Continuous Integration
+
+This project uses GitHub Actions for continuous integration:
+
+- Tests are automatically run on pull requests and must pass before merging
+- When a new release is published, the code is automatically tested, built, and published to NPM
+
+You can run the same checks locally:
+
+```bash
+# Run tests
+npm test
+
+# Run linting
+npm run lint:check
+
+# Run formatting check
+npm run format:check
+```
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Built with [ProseMirror](https://prosemirror.net/)
-- Syntax highlighting by [highlight.js](https://highlightjs.org/)
-- Markdown parsing by [markdown-it](https://github.com/markdown-it/markdown-it)
+FlowMD is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

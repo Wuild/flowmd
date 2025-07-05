@@ -1,0 +1,566 @@
+/**
+ * Editor component styles - Combined from all components
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+// Main editor wrapper with all nested components
+.flowmd-editor {
+  color: var(--flowmd-color-text);
+  font-family: var(--flowmd-font-family-base);
+
+  &:focus-within {
+    border-color: var(--flowmd-color-border-focus);
+    box-shadow: var(--flowmd-shadow-focus);
+  }
+
+  // Fullscreen styles
+  &--fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: var(--flowmd-z-fullscreen);
+
+    //background: var(--flowmd-color-background);
+    box-sizing: border-box;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .flowmd-fullscreen-editor {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  // ===== TOOLBAR STYLES =====
+  &__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--flowmd-toolbar-gap);
+    padding: var(--flowmd-toolbar-padding);
+    background-color: var(--flowmd-toolbar-background);
+    border: var(--flowmd-border-width) solid var(--flowmd-color-border);
+    border-bottom: none;
+    border-radius: var(--flowmd-toolbar-border-radius);
+
+    // When toolbar is present, adjust editor border radius
+    ~ .flowmd-editor__view .ProseMirror {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      width: 100%;
+      min-height: 100%;
+    }
+
+    // Spacer styles
+    &-spacer {
+      flex: 1;
+      min-width: var(--flowmd-spacing-sm);
+    }
+
+    // Button groups
+    &-group {
+      display: flex;
+      border-right: var(--flowmd-border-width) solid var(--flowmd-color-border);
+      padding-right: var(--flowmd-spacing-sm);
+      margin-right: var(--flowmd-spacing-sm);
+
+      &:last-child {
+        border-right: none;
+        padding-right: 0;
+        margin-right: 0;
+      }
+    }
+
+    // Toolbar separator
+    &-separator {
+      width: var(--flowmd-border-width);
+      height: var(--flowmd-toolbar-button-height);
+      margin: 0 var(--flowmd-spacing-xs);
+      background-color: var(--flowmd-color-separator);
+      align-self: center;
+    }
+
+    // Dropdown container
+    &-dropdown {
+      min-width: var(--flowmd-dropdown-min-width);
+      background-color: var(--flowmd-color-background);
+      border: var(--flowmd-border-width) solid var(--flowmd-color-border);
+      border-radius: var(--flowmd-dropdown-border-radius);
+      box-shadow: var(--flowmd-shadow-base);
+      z-index: var(--flowmd-z-dropdown);
+
+      &__item {
+        display: block;
+        width: 100%;
+        padding: var(--flowmd-dropdown-padding);
+        text-align: left;
+        background: none;
+        border: none;
+        font-size: var(--flowmd-dropdown-font-size);
+        color: var(--flowmd-color-text);
+        cursor: pointer;
+
+        &:hover {
+          background-color: var(--flowmd-color-active);
+        }
+
+        &:first-child {
+          border-top-left-radius: var(--flowmd-dropdown-border-radius);
+          border-top-right-radius: var(--flowmd-dropdown-border-radius);
+        }
+
+        &:last-child {
+          border-bottom-left-radius: var(--flowmd-dropdown-border-radius);
+          border-bottom-right-radius: var(--flowmd-dropdown-border-radius);
+        }
+      }
+    }
+  }
+
+  &__view {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    color: var(--flowmd-color-text);
+    border: var(--flowmd-border-width) solid var(--flowmd-color-border);
+    background-color: var(--flowmd-color-background);
+
+    .ProseMirror {
+      padding: var(--flowmd-editor-padding);
+
+      &.drag-over {
+        border-color: var(--flowmd-color-primary);
+        background-color: var(--flowmd-color-active);
+      }
+    }
+
+  }
+
+  // ===== TOOLBAR BUTTON STYLES =====
+  &__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--flowmd-toolbar-button-min-width);
+    height: var(--flowmd-toolbar-button-height);
+    padding: var(--flowmd-toolbar-button-padding);
+    background-color: transparent;
+    border: var(--flowmd-border-width) solid transparent;
+    border-radius: var(--flowmd-toolbar-button-border-radius);
+    color: var(--flowmd-color-text);
+    font-size: var(--flowmd-toolbar-button-font-size);
+    font-weight: var(--flowmd-toolbar-button-font-weight);
+    cursor: pointer;
+    transition: all var(--flowmd-transition-base);
+
+    // FontAwesome icon styles
+    i {
+      font-size: var(--flowmd-toolbar-button-icon-size);
+      width: var(--flowmd-toolbar-button-icon-size);
+      height: var(--flowmd-toolbar-button-icon-size);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    // Hover state
+    &:hover {
+      background-color: rgba(0, 0, 0, var(--flowmd-opacity-hover));
+      border-color: var(--flowmd-color-border-hover);
+    }
+
+    // Focus state
+    &:focus {
+      outline: none;
+      box-shadow: var(--flowmd-shadow-focus);
+    }
+
+    // Active state
+    &--active,
+    &.active {
+      background-color: var(--flowmd-color-active);
+      border-color: var(--flowmd-color-primary);
+      color: var(--flowmd-color-primary);
+    }
+
+    // Disabled state
+    &--disabled {
+      opacity: var(--flowmd-opacity-disabled);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    // Dropdown button
+    &--dropdown {
+      position: relative;
+
+      &::after {
+        content: '▼';
+        font-size: var(--flowmd-font-size-tiny);
+        margin-left: var(--flowmd-spacing-xs);
+      }
+    }
+  }
+
+  // ===== TEXTAREA VIEW STYLES =====
+  &__textarea {
+    width: 100%;
+    height: 100%;
+    min-height: var(--flowmd-editor-min-height);
+    padding: var(--flowmd-spacing-md);
+    border: var(--flowmd-border-width) solid var(--flowmd-color-border);
+    border-radius: var(--flowmd-editor-border-radius);
+    font-family: var(--flowmd-font-family-textarea);
+    font-size: var(--flowmd-font-size-small);
+    line-height: var(--flowmd-line-height-base);
+    resize: vertical;
+    outline: none;
+    display: none;
+    box-sizing: border-box;
+    margin-top: calc(var(--flowmd-border-width) * -1);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    color: var(--flowmd-color-text);
+    background-color: var(--flowmd-color-background);
+
+    &:focus {
+      border-color: var(--flowmd-color-border-focus);
+      box-shadow: var(--flowmd-shadow-focus);
+    }
+  }
+}
+
+// ===== TOOLBOX STYLES =====
+.flowmd-editor__toolbox {
+  position: absolute;
+  display: flex;
+  background: var(--flowmd-color-background);
+  border: var(--flowmd-border-width) solid var(--flowmd-color-border);
+  border-radius: var(--flowmd-border-radius-base);
+  box-shadow: var(--flowmd-shadow-lg);
+  z-index: var(--flowmd-z-toolbox);
+  font-family: var(--flowmd-font-family-base);
+  padding: var(--flowmd-toolbox-padding);
+
+  &__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--flowmd-toolbox-button-size);
+    height: var(--flowmd-toolbox-button-size);
+    padding: 0;
+    margin: var(--flowmd-toolbox-button-margin);
+    background: none;
+    border: none;
+    border-radius: var(--flowmd-border-radius-base);
+    cursor: pointer;
+    transition: background-color var(--flowmd-transition-fast);
+
+    &:hover {
+      background-color: var(--flowmd-color-active);
+    }
+
+    // SVG icons
+    svg {
+      width: var(--flowmd-toolbox-icon-size);
+      height: var(--flowmd-toolbox-icon-size);
+      fill: var(--flowmd-color-text);
+    }
+
+    // FontAwesome icons
+    i {
+      font-size: var(--flowmd-toolbox-icon-size);
+      width: var(--flowmd-toolbox-icon-size);
+      height: var(--flowmd-toolbox-icon-size);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--flowmd-color-text);
+    }
+  }
+
+  // Image toolbox variant
+  &--image {
+    // Any image-specific styles can go here
+  }
+
+  // Link toolbox variant
+  &--link {
+    // Any link-specific styles can go here
+  }
+}
+
+// ===== MODAL STYLES =====
+.flowmd-editor__modal {
+  &-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--flowmd-modal-backdrop);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--flowmd-z-modal);
+  }
+
+  &-container {
+    background-color: var(--flowmd-color-background);
+    border-radius: var(--flowmd-border-radius-base);
+    box-shadow: var(--flowmd-shadow-xl);
+    width: 100%;
+    max-width: var(--flowmd-modal-max-width);
+    max-height: var(--flowmd-modal-max-height);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: var(--flowmd-font-family-base);
+    color: var(--flowmd-color-text);
+  }
+
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--flowmd-modal-header-padding);
+    border-bottom: var(--flowmd-border-width) solid var(--flowmd-color-border);
+  }
+
+  &-title {
+    margin: 0;
+    font-size: var(--flowmd-modal-title-font-size);
+    font-weight: var(--flowmd-modal-title-font-weight);
+    color: var(--flowmd-color-text);
+  }
+
+  &-close {
+    background: none;
+    border: none;
+    font-size: var(--flowmd-modal-close-font-size);
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+    color: var(--flowmd-color-text-muted);
+    transition: color var(--flowmd-transition-fast);
+
+    &:hover {
+      color: var(--flowmd-color-text);
+    }
+  }
+
+  &-content {
+    padding: var(--flowmd-modal-content-padding);
+    overflow-y: auto;
+    flex: 1;
+
+    // Form elements inside modal
+    input[type='text'],
+    input[type='url'],
+    textarea {
+      width: 100%;
+      padding: var(--flowmd-input-padding);
+      border: var(--flowmd-border-width) solid var(--flowmd-color-border);
+      border-radius: var(--flowmd-input-border-radius);
+      font-family: var(--flowmd-font-family-base);
+      font-size: var(--flowmd-input-font-size);
+      margin-bottom: var(--flowmd-input-margin-bottom);
+
+      &:focus {
+        outline: none;
+        border-color: var(--flowmd-color-border-focus);
+        box-shadow: var(--flowmd-shadow-focus);
+      }
+    }
+
+    label {
+      display: block;
+      margin-bottom: var(--flowmd-spacing-sm);
+      font-weight: var(--flowmd-font-weight-medium);
+    }
+  }
+
+  &-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--flowmd-spacing-sm);
+    padding: var(--flowmd-spacing-md) var(--flowmd-modal-content-padding);
+    border-top: var(--flowmd-border-width) solid var(--flowmd-color-border);
+  }
+
+  &-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    padding: var(--flowmd-input-padding);
+    border: var(--flowmd-border-width) solid var(--flowmd-color-border);
+    border-radius: var(--flowmd-input-border-radius);
+    font-family: var(--flowmd-font-family-base);
+    font-size: var(--flowmd-input-font-size);
+    font-weight: var(--flowmd-font-weight-medium);
+    background-color: var(--flowmd-color-background);
+    color: var(--flowmd-color-text);
+    cursor: pointer;
+    transition: all var(--flowmd-transition-fast);
+
+    &:hover {
+      background-color: var(--flowmd-color-hover);
+      border-color: var(--flowmd-color-border-hover);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: var(--flowmd-shadow-focus);
+    }
+
+    &.flowmd-editor__modal-confirm {
+      background-color: var(--flowmd-color-primary);
+      border-color: var(--flowmd-color-primary);
+      color: white;
+
+      &:hover {
+        background-color: var(--flowmd-color-primary-hover);
+        border-color: var(--flowmd-color-primary-hover);
+      }
+    }
+  }
+}
+
+// ===== DROPDOWN STYLES =====
+.flowmd-editor__dropdown {
+  position: absolute;
+  background: var(--flowmd-color-background);
+  border: var(--flowmd-border-width) solid var(--flowmd-color-border);
+  border-radius: var(--flowmd-dropdown-border-radius);
+  box-shadow: var(--flowmd-shadow-lg);
+  z-index: var(--flowmd-z-dropdown);
+  min-width: var(--flowmd-dropdown-min-width);
+  max-height: var(--flowmd-dropdown-max-height);
+  overflow-y: auto;
+  font-family: var(--flowmd-font-family-base);
+  font-size: var(--flowmd-dropdown-font-size);
+  color: var(--flowmd-color-text);
+
+  &__item {
+    display: block;
+    width: 100%;
+    padding: var(--flowmd-dropdown-padding);
+    text-align: left;
+    background: none;
+    border: none;
+    font-size: var(--flowmd-dropdown-font-size);
+    color: var(--flowmd-color-text);
+    cursor: pointer;
+    transition: background-color var(--flowmd-transition-fast);
+
+    &:hover {
+      background-color: var(--flowmd-color-active);
+    }
+
+    &:first-child {
+      border-top-left-radius: var(--flowmd-dropdown-border-radius);
+      border-top-right-radius: var(--flowmd-dropdown-border-radius);
+    }
+
+    &:last-child {
+      border-bottom-left-radius: var(--flowmd-dropdown-border-radius);
+      border-bottom-right-radius: var(--flowmd-dropdown-border-radius);
+    }
+  }
+}
+
+// ===== IMAGE UPLOAD STYLES =====
+.flowmd-image-upload-container {
+  margin-top: var(--flowmd-spacing-md);
+  margin-bottom: var(--flowmd-spacing-md);
+}
+
+.upload-area {
+  border: 2px dashed var(--flowmd-color-border);
+  border-radius: var(--flowmd-border-radius-base);
+  padding: var(--flowmd-spacing-lg);
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--flowmd-transition-fast);
+  background-color: var(--flowmd-color-background-secondary);
+  margin-bottom: var(--flowmd-spacing-md);
+
+  &:hover {
+    border-color: var(--flowmd-color-primary);
+    background-color: var(--flowmd-color-active);
+  }
+
+  &.drag-over {
+    border-color: var(--flowmd-color-primary);
+    background-color: var(--flowmd-color-active);
+  }
+
+  p {
+    margin: 0;
+    color: var(--flowmd-color-text-muted);
+    font-size: var(--flowmd-font-size-small);
+  }
+}
+
+.upload-preview {
+  margin-top: var(--flowmd-spacing-md);
+  text-align: center;
+
+  img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: var(--flowmd-border-radius-base);
+    border: var(--flowmd-border-width) solid var(--flowmd-color-border);
+  }
+}
+
+// ===== EMOJI DROPDOWN STYLES =====
+.flowmd-editor__emoji-dropdown {
+  position: absolute;
+  background: var(--flowmd-color-background);
+  border: var(--flowmd-border-width) solid var(--flowmd-color-border);
+  border-radius: var(--flowmd-border-radius-base);
+  box-shadow: var(--flowmd-shadow-lg);
+  max-height: var(--flowmd-emoji-dropdown-max-height);
+  overflow-y: auto;
+  z-index: var(--flowmd-z-dropdown);
+  min-width: var(--flowmd-emoji-dropdown-min-width);
+  font-family: var(--flowmd-font-family-base);
+
+  &__item {
+    padding: var(--flowmd-emoji-dropdown-item-padding);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-bottom: var(--flowmd-border-width) solid var(--flowmd-color-background-secondary);
+    transition: background-color var(--flowmd-transition-fast);
+
+    &:hover,
+    &--selected {
+      background-color: var(--flowmd-color-active);
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__icon {
+    margin-right: var(--flowmd-spacing-sm);
+    font-size: var(--flowmd-emoji-icon-size);
+    width: var(--flowmd-emoji-icon-width);
+    text-align: center;
+  }
+
+  &__name {
+    font-size: var(--flowmd-font-size-small);
+    color: var(--flowmd-color-text);
+  }
+}

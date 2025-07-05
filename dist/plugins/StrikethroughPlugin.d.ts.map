@@ -1,1 +1,0 @@
-{"version":3,"file":"StrikethroughPlugin.d.ts","sourceRoot":"","sources":["../../src/plugins/StrikethroughPlugin.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,UAAU,EAAE,MAAM,cAAc,CAAA;AAEzC;;GAEG;AACH,MAAM,CAAC,OAAO,OAAO,mBAAoB,SAAQ,UAAU;IACzD;;OAEG;IACH,SAAgB,IAAI,mBAAkB;IAEtC;;OAEG;;IAeH;;;;OAIG;IACH,OAAO,CAAC,mBAAmB;CAI5B"}

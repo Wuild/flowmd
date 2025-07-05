@@ -1,0 +1,52 @@
+{
+	"env": {
+		"browser": true,
+		"es2021": true,
+		"node": true
+	},
+	"extends": [
+		"eslint:recommended",
+		"@typescript-eslint/recommended",
+		"prettier"
+	],
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaVersion": "latest",
+		"sourceType": "module",
+		"project": "./tsconfig.json"
+	},
+	"plugins": [
+		"@typescript-eslint",
+		"prettier"
+	],
+	"rules": {
+		"prettier/prettier": "error",
+		"semi": ["error", "always"],
+		"quotes": ["error", "single"],
+		"indent": ["error", "tab"],
+		"no-tabs": "off",
+		"@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+		"@typescript-eslint/explicit-function-return-type": "warn",
+		"@typescript-eslint/no-explicit-any": "warn",
+		"@typescript-eslint/prefer-const": "error",
+		"no-console": "warn",
+		"no-debugger": "error",
+		"eqeqeq": ["error", "always"],
+		"curly": ["error", "all"],
+		"brace-style": ["error", "1tbs", { "allowSingleLine": true }],
+		"comma-dangle": ["error", "never"],
+		"object-curly-spacing": ["error", "always"],
+		"array-bracket-spacing": ["error", "never"],
+		"space-before-function-paren": ["error", "never"],
+		"keyword-spacing": ["error", { "before": true, "after": true }],
+		"space-infix-ops": "error",
+		"eol-last": ["error", "always"],
+		"no-trailing-spaces": "error"
+	},
+	"ignorePatterns": [
+		"dist/",
+		"node_modules/",
+		"*.js"
+	]
+}
+

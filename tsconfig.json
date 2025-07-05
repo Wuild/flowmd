@@ -1,28 +1,28 @@
 {
-	"compilerOptions": {
-		"target": "ES2018",
-		"lib": ["ES2018", "DOM", "DOM.Iterable"],
-		"module": "ESNext",
-		"moduleResolution": "node",
-		"declaration": true,
-		"declarationMap": true,
-		"outDir": "./dist",
-		"strict": true,
-		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
-		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"noEmit": false,
-		"jsx": "preserve",
-		"sourceMap": true,
-		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true,
-		"allowJs": true,
-		"checkJs": false,
-		"typeRoots": ["./node_modules/@types", "./src/types"]
-	},
-	"include": ["src/**/*", "tests/**/*"],
-	"exclude": ["node_modules", "dist"]
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": false,
+    "moduleDetection": "force",
+    "noEmit": false,
+    "declaration": true,
+    "declarationDir": "dist",
+    "emitDeclarationOnly": true,
+    "outDir": "dist",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["src"]
 }

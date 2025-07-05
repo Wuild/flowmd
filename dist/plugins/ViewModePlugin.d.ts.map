@@ -1,1 +1,0 @@
-{"version":3,"file":"ViewModePlugin.d.ts","sourceRoot":"","sources":["../../src/plugins/ViewModePlugin.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,UAAU,EAAE,MAAM,cAAc,CAAA;AAEzC;;GAEG;AACH,MAAM,CAAC,OAAO,OAAO,cAAe,SAAQ,UAAU;IACpD;;OAEG;IACH,SAAgB,IAAI,cAAa;IAEjC;;OAEG;IACH,OAAO,CAAC,YAAY,CAAQ;IAE5B;;OAEG;;IAqBH;;;;OAIG;IACH,OAAO,CAAC,cAAc;CA2BvB"}

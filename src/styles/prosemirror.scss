@@ -1,0 +1,132 @@
+.ProseMirror {
+  position: relative;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  -webkit-font-variant-ligatures: none;
+  font-variant-ligatures: none;
+  font-feature-settings: 'liga' 0;
+  min-height: 0;
+  outline: none;
+  box-sizing: border-box;
+  color: inherit;
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  // Placeholder
+  .editor-placeholder {
+    position: relative;
+
+    &:first-child:before {
+      content: attr(data-placeholder);
+      color: var(--flowmd-color-placeholder);
+      pointer-events: none;
+      font-style: italic;
+      position: absolute;
+    }
+  }
+
+  // Headings
+  h1, h2, h3, h4, h5, h6 {
+    margin: var(--flowmd-heading-margin);
+    font-weight: var(--flowmd-heading-font-weight);
+    line-height: var(--flowmd-heading-line-height);
+  }
+
+  h1 {
+    font-size: var(--flowmd-heading-h1-size);
+  }
+
+  h2 {
+    font-size: var(--flowmd-heading-h2-size);
+  }
+
+  h3 {
+    font-size: var(--flowmd-heading-h3-size);
+  }
+
+  h4 {
+    font-size: var(--flowmd-heading-h4-size);
+  }
+
+  h5 {
+    font-size: var(--flowmd-heading-h5-size);
+  }
+
+  h6 {
+    font-size: var(--flowmd-heading-h6-size);
+  }
+
+  // Paragraphs
+  p {
+    margin-bottom: var(--flowmd-paragraph-margin-bottom);
+  }
+
+  // Lists
+  ul, ol {
+    margin: var(--flowmd-list-margin);
+    padding-left: var(--flowmd-list-padding-left);
+  }
+
+  li {
+    margin-bottom: var(--flowmd-list-item-margin);
+  }
+
+  // Blockquotes
+  blockquote {
+    margin: var(--flowmd-blockquote-margin);
+    padding-left: var(--flowmd-blockquote-padding-left);
+    border-left: var(--flowmd-blockquote-border-width) solid var(--flowmd-color-border);
+    color: var(--flowmd-color-blockquote);
+  }
+
+  // Code blocks
+  pre {
+    background-color: var(--flowmd-color-code-bg);
+    padding: var(--flowmd-code-block-padding);
+    border-radius: var(--flowmd-border-radius-base);
+    overflow-x: auto;
+    margin: var(--flowmd-code-block-margin);
+  }
+
+  code {
+    font-family: var(--flowmd-font-family-mono);
+    font-size: var(--flowmd-code-font-size);
+    background-color: var(--flowmd-color-code-bg);
+    padding: var(--flowmd-code-padding);
+    border-radius: var(--flowmd-code-border-radius);
+  }
+
+  // Horizontal rule
+  hr {
+    margin: var(--flowmd-hr-margin);
+    border: none;
+    border-top: var(--flowmd-border-width) solid var(--flowmd-color-border);
+  }
+
+  // Images
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  // Links
+  a {
+    color: var(--flowmd-color-primary);
+    text-decoration: underline;
+
+    &:hover {
+      color: var(--flowmd-color-primary-hover);
+    }
+  }
+
+  // Strong and emphasis
+  strong {
+    font-weight: var(--flowmd-font-weight-semibold);
+  }
+
+  em {
+    font-style: italic;
+  }
+}

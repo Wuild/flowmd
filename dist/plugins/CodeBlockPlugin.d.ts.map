@@ -1,1 +1,0 @@
-{"version":3,"file":"CodeBlockPlugin.d.ts","sourceRoot":"","sources":["../../src/plugins/CodeBlockPlugin.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,UAAU,EAAE,MAAM,cAAc,CAAA;AAEzC;;GAEG;AACH,MAAM,CAAC,OAAO,OAAO,eAAgB,SAAQ,UAAU;IACrD;;OAEG;IACH,SAAgB,IAAI,eAAc;IAElC;;OAEG;;IAeH;;;;OAIG;IACH,OAAO,CAAC,mBAAmB;IAwB3B;;;;;;OAMG;IACH,OAAO,CAAC,eAAe;CAexB"}

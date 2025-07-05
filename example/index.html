@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="description" content="FlowMD - A WYSIWYG Markdown Editor built with ProseMirror" />
+	<title>FlowMD Demo - Markdown WYSIWYG Editor</title>
+	<style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--flowmd-color-background-secondary);
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2em;
+        }
+	</style>
+</head>
+<body>
+<div id="app">
+	<div class="container">
+		<textarea id="editor" name="data"></textarea>
+	</div>
+</div>
+<script type="module">
+	import { createEditor } from '../src/index';
+
+	// @ts-ignore
+	import '../src/styles/themes/light.scss';
+
+	// Initialize the editor
+	const editorElement = document.getElementById('editor');
+
+	if (!editorElement) {
+		console.error('Editor element not found');
+		throw new Error('Editor element not found');
+	}
+
+	// Create the editor instance
+	const editor = createEditor({
+		element: editorElement,
+		// Initial content with various markdown elements to test schema-based parsing
+		placeholder: 'Start writing your article...',
+		toolbar:
+			'heading,bold,italic,strikethrough,|,link,image,|,bullet_list,ordered_list,blockquote,codeblock,spacer,|,fullscreen',
+		// Height settings
+		height: "300px",      // Fixed height
+		maxHeight: "500px", // Maximum height (uncomment to use)
+		minHeight: "200px", // Minimum height (uncomment to use)
+		// No plugins specified - will use all plugins from the plugins folder by default
+		// Plugin-specific options
+		pluginOptions: {
+			// Options for the image plugin
+			image: {
+				upload: true // Enable image upload, if no uploadUrl is provided, images will be encoded as base64
+				// No uploadUrl provided - images will be encoded as base64
+				// Uncomment the line below to upload to a server instead
+				// uploadUrl: "https://api.example.com/upload" // Replace with your actual upload endpoint
+			}
+		}
+	});
+</script>
+</body>
+</html>

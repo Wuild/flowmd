@@ -1,0 +1,170 @@
+// Import FontAwesome
+@use '@fortawesome/fontawesome-free/css/all.css';
+
+@use '../editor';
+@use '../prosemirror';
+
+:root {
+  // ===== COLORS =====
+  --flowmd-color-primary: #007bff;
+  --flowmd-color-primary-hover: #0056b3;
+  --flowmd-color-primary-active: #004085;
+  --flowmd-color-text: #333333;
+  --flowmd-color-text-muted: #6c757d;
+  --flowmd-color-text-light: #aaaaaa;
+  --flowmd-color-border: #e1e5e9;
+  --flowmd-color-border-hover: #ced4da;
+  --flowmd-color-border-focus: #80bdff;
+  --flowmd-color-active: #f8f9fa;
+  --flowmd-color-hover: #e9ecef;
+  --flowmd-color-background: #ffffff;
+  --flowmd-color-background-secondary: #f5f5f5;
+  --flowmd-color-background-muted: #f8f9fa;
+  --flowmd-color-placeholder: #aaaaaa;
+  --flowmd-color-code-bg: #f5f5f5;
+  --flowmd-color-blockquote: #666666;
+  --flowmd-color-separator: #dee2e6;
+
+  // ===== TYPOGRAPHY =====
+  --flowmd-font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  --flowmd-font-family-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  --flowmd-font-family-textarea: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  --flowmd-font-size-base: 16px;
+  --flowmd-font-size-small: 14px;
+  --flowmd-font-size-tiny: 12px;
+  --flowmd-font-size-large: 18px;
+  --flowmd-font-weight-normal: 400;
+  --flowmd-font-weight-medium: 500;
+  --flowmd-font-weight-semibold: 600;
+  --flowmd-line-height-base: 1.5;
+  --flowmd-line-height-tight: 1.2;
+
+  // ===== SPACING =====
+  --flowmd-spacing-xs: 4px;
+  --flowmd-spacing-sm: 8px;
+  --flowmd-spacing-md: 12px;
+  --flowmd-spacing-base: 16px;
+  --flowmd-spacing-lg: 20px;
+  --flowmd-spacing-xl: 24px;
+  --flowmd-spacing-xxl: 32px;
+
+  // ===== BORDERS =====
+  --flowmd-border-radius-sm: 3px;
+  --flowmd-border-radius-base: 4px;
+  --flowmd-border-radius-lg: 6px;
+  --flowmd-border-width: 1px;
+  --flowmd-border-width-thick: 2px;
+  --flowmd-border-width-focus: 3px;
+
+  // ===== SHADOWS =====
+  --flowmd-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --flowmd-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --flowmd-shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --flowmd-shadow-xl: 0 4px 20px rgba(0, 0, 0, 0.2);
+  --flowmd-shadow-focus: 0 0 0 2px rgba(0, 123, 255, 0.2);
+
+  // ===== Z-INDEX =====
+  --flowmd-z-dropdown: 1000;
+  --flowmd-z-toolbox: 1000;
+  --flowmd-z-modal: 2000;
+  --flowmd-z-fullscreen: 10000;
+
+  // ===== TRANSITIONS =====
+  --flowmd-transition-fast: 0.15s ease;
+  --flowmd-transition-base: 0.2s ease;
+  --flowmd-transition-slow: 0.3s ease;
+
+  // ===== TOOLBAR SPECIFIC =====
+  --flowmd-toolbar-background: #f5f5f5;
+  --flowmd-toolbar-padding: 8px;
+  --flowmd-toolbar-gap: 4px;
+  --flowmd-toolbar-border-radius: var(--flowmd-border-radius-base) var(--flowmd-border-radius-base) 0 0;
+
+  // ===== TOOLBAR BUTTON SPECIFIC =====
+  --flowmd-toolbar-button-height: 32px;
+  --flowmd-toolbar-button-min-width: 32px;
+  --flowmd-toolbar-button-padding: 0 8px;
+  --flowmd-toolbar-button-border-radius: var(--flowmd-border-radius-base);
+  --flowmd-toolbar-button-font-size: var(--flowmd-font-size-small);
+  --flowmd-toolbar-button-font-weight: var(--flowmd-font-weight-medium);
+  --flowmd-toolbar-button-icon-size: 16px;
+
+  // ===== DROPDOWN SPECIFIC =====
+  --flowmd-dropdown-min-width: 150px;
+  --flowmd-dropdown-max-height: 300px;
+  --flowmd-dropdown-padding: 8px 12px;
+  --flowmd-dropdown-font-size: var(--flowmd-font-size-small);
+  --flowmd-dropdown-border-radius: var(--flowmd-border-radius-base);
+
+  // ===== MODAL SPECIFIC =====
+  --flowmd-modal-max-width: 500px;
+  --flowmd-modal-max-height: 90vh;
+  --flowmd-modal-header-padding: 16px 20px;
+  --flowmd-modal-content-padding: 20px;
+  --flowmd-modal-title-font-size: var(--flowmd-font-size-large);
+  --flowmd-modal-title-font-weight: var(--flowmd-font-weight-semibold);
+  --flowmd-modal-close-font-size: 24px;
+  --flowmd-modal-backdrop: rgba(0, 0, 0, 0.5);
+
+  // ===== TOOLBOX SPECIFIC =====
+  --flowmd-toolbox-padding: 4px;
+  --flowmd-toolbox-button-size: 32px;
+  --flowmd-toolbox-button-margin: 0 2px;
+  --flowmd-toolbox-icon-size: 16px;
+
+  // ===== PROSEMIRROR EDITOR SPECIFIC =====
+  --flowmd-editor-padding: var(--flowmd-spacing-base);
+  --flowmd-editor-border-radius: var(--flowmd-border-radius-base);
+  --flowmd-editor-min-height: 200px;
+
+  // ===== FORM ELEMENTS =====
+  --flowmd-input-padding: 8px 12px;
+  --flowmd-input-border-radius: var(--flowmd-border-radius-base);
+  --flowmd-input-font-size: var(--flowmd-font-size-small);
+  --flowmd-input-margin-bottom: 16px;
+
+  // ===== EMOJI DROPDOWN SPECIFIC =====
+  --flowmd-emoji-dropdown-min-width: 200px;
+  --flowmd-emoji-dropdown-max-height: 200px;
+  --flowmd-emoji-dropdown-item-padding: 8px 12px;
+  --flowmd-emoji-icon-size: 16px;
+  --flowmd-emoji-icon-width: 20px;
+
+  // ===== HEADING SIZES =====
+  --flowmd-heading-h1-size: 2em;
+  --flowmd-heading-h2-size: 1.5em;
+  --flowmd-heading-h3-size: 1.25em;
+  --flowmd-heading-h4-size: 1em;
+  --flowmd-heading-h5-size: 0.875em;
+  --flowmd-heading-h6-size: 0.85em;
+  --flowmd-heading-margin: 1em 0 0.5em;
+  --flowmd-heading-font-weight: var(--flowmd-font-weight-semibold);
+  --flowmd-heading-line-height: var(--flowmd-line-height-tight);
+
+  // ===== CODE ELEMENTS =====
+  --flowmd-code-font-size: 0.9em;
+  --flowmd-code-padding: 0.2em 0.4em;
+  --flowmd-code-border-radius: var(--flowmd-border-radius-sm);
+  --flowmd-code-block-padding: 0.75em 1em;
+  --flowmd-code-block-margin: 1em 0;
+
+  // ===== LISTS =====
+  --flowmd-list-margin: 1em 0;
+  --flowmd-list-padding-left: 2em;
+  --flowmd-list-item-margin: 0.5em;
+
+  // ===== BLOCKQUOTE =====
+  --flowmd-blockquote-margin: 1em 0;
+  --flowmd-blockquote-padding-left: 1em;
+  --flowmd-blockquote-border-width: 3px;
+
+  // ===== PARAGRAPH =====
+  --flowmd-paragraph-margin-bottom: 1em;
+
+  // ===== HORIZONTAL RULE =====
+  --flowmd-hr-margin: 2em 0;
+
+  // ===== OPACITY =====
+  --flowmd-opacity-disabled: 0.5;
+  --flowmd-opacity-hover: 0.05;
+}
